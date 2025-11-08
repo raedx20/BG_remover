@@ -1,0 +1,3 @@
+"""
+GUI tab components.
+"""

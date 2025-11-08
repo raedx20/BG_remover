@@ -1,0 +1,66 @@
+# Background Remover Configuration
+# This file is read/written by the GUI
+
+input:
+  source_folder: ""
+  extensions:
+    - jpg
+    - jpeg
+    - png
+    - webp
+  recursive: true
+
+output:
+  output_folder: ""
+  overwrite_policy: "disambiguate"  # skip / overwrite / disambiguate
+  # Naming rules are fixed: _PRT, _LSC, _SQR_LSC (±5% near-square)
+
+processing:
+  mode: "A"  # A: AI-first + Classical refine (default)
+             # B: Classical-first + AI fallback
+             # C: Hybrid-merge
+  force_ai_all: false  # Override mode, use AI for all (troubleshooting)
+
+model:
+  ai_model: "isnet-general"  # isnet-general (default) / u2net / u2netp
+
+refinement:
+  edge_feather_px: 3
+  grabcut_enabled: true
+  grabcut_iterations: 4  # 3-5 iterations
+  white_preservation:
+    enabled: true  # Always on
+    hsv_s_threshold: 25  # S <= 25
+    hsv_v_threshold: 220  # V >= 220
+    lab_l_threshold: 85  # Lab L >= 85 (alternative)
+  trimming:
+    enabled: true
+    safe_margin_px: 3  # 2-4 px
+
+qc:
+  fg_ratio_min: 10  # Expected FG ratio range: 10-90%
+  fg_ratio_max: 90
+  edge_confidence_min: 14  # Laplacian median >= 14
+  # Border whiteness check is informative only (no auto-kill of whites)
+
+  # Fallback rules by mode:
+  # Mode A: If AI FG% < 8% or > 95% or edge conf < 12 → auto Hybrid refine
+  fallback_fg_ratio_min: 8
+  fallback_fg_ratio_max: 95
+  fallback_edge_confidence_min: 12
+
+logging:
+  csv_enabled: true  # Always ON
+  debug_masks_enabled: false  # OFF by default - saves small side-by-side previews
+
+performance:
+  concurrency: "auto"  # auto (CPU) or fixed number (int)
+  max_side_px: 1800  # AI & Classical: 1600-2000 px
+  timeout_ai_ms: 12000
+  timeout_classical_ms: 4000
+  queue_order: "natural"  # natural (default) / smallest_first
+
+# Internal runtime state (not typically edited by user)
+runtime:
+  last_input_folder: ""
+  last_output_folder: ""
