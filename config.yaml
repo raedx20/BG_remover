@@ -22,7 +22,26 @@ processing:
   force_ai_all: false  # Override mode, use AI for all (troubleshooting)
 
 model:
-  ai_model: "isnet-general"  # isnet-general (default) / u2net / u2netp
+  ai_model: "isnet-general"  # See all available models below
+  # Available models from rembg:
+  # - isnet-general: Best for products (Default, 176MB)
+  # - u2net: General purpose (176MB)
+  # - u2netp: Lightweight/faster (4.7MB)
+  # - u2net-human: Optimized for people (176MB)
+  # - u2net-cloth: Clothing/fashion (176MB)
+  # - silueta: High-quality silhouettes (43MB)
+  # - isnet-anime: Anime/illustrations (176MB)
+  # - sam: Segment Anything Model (358MB)
+
+  # Alpha matting for better edge quality (rembg native feature)
+  alpha_matting:
+    enabled: false  # Enable for complex/hairy edges, slower but better quality
+    foreground_threshold: 240  # 0-255, higher = stricter foreground
+    background_threshold: 10   # 0-255, lower = stricter background
+    erode_size: 10             # Erosion kernel size for matting
+
+  # Post-processing (rembg built-in morphological operations)
+  post_process_mask: false  # Apply rembg's mask post-processing
 
 refinement:
   edge_feather_px: 3

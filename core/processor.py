@@ -167,11 +167,17 @@ class ImageProcessor:
         notes = []
         model_name = self.config['model']['ai_model']
 
-        # Step 1: AI segmentation
+        # Step 1: AI segmentation with alpha matting options
+        alpha_matting_cfg = self.config['model'].get('alpha_matting', {})
         ai_mask = segment_with_ai(
             image,
             model_name=model_name,
-            timeout_ms=self.config['performance']['timeout_ai_ms']
+            timeout_ms=self.config['performance']['timeout_ai_ms'],
+            alpha_matting=alpha_matting_cfg.get('enabled', False),
+            alpha_matting_foreground_threshold=alpha_matting_cfg.get('foreground_threshold', 240),
+            alpha_matting_background_threshold=alpha_matting_cfg.get('background_threshold', 10),
+            alpha_matting_erode_size=alpha_matting_cfg.get('erode_size', 10),
+            post_process_mask=self.config['model'].get('post_process_mask', False)
         )
 
         if ai_mask is None:
@@ -292,11 +298,17 @@ class ImageProcessor:
         notes = []
         model_name = self.config['model']['ai_model']
 
-        # Step 1: Run AI
+        # Step 1: Run AI with alpha matting options
+        alpha_matting_cfg = self.config['model'].get('alpha_matting', {})
         ai_mask = segment_with_ai(
             image,
             model_name=model_name,
-            timeout_ms=self.config['performance']['timeout_ai_ms']
+            timeout_ms=self.config['performance']['timeout_ai_ms'],
+            alpha_matting=alpha_matting_cfg.get('enabled', False),
+            alpha_matting_foreground_threshold=alpha_matting_cfg.get('foreground_threshold', 240),
+            alpha_matting_background_threshold=alpha_matting_cfg.get('background_threshold', 10),
+            alpha_matting_erode_size=alpha_matting_cfg.get('erode_size', 10),
+            post_process_mask=self.config['model'].get('post_process_mask', False)
         )
 
         # Step 2: Run Classical

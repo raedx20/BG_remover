@@ -27,9 +27,15 @@ class ModelTab(QWidget):
         model_row.addWidget(QLabel("Model:"))
 
         self.model_combo = QComboBox()
-        self.model_combo.addItem("isnet-general (Default - Best for products)", "isnet-general")
-        self.model_combo.addItem("u2net (General purpose)", "u2net")
-        self.model_combo.addItem("u2netp (Lightweight, faster)", "u2netp")
+        # All available rembg models
+        self.model_combo.addItem("isnet-general (Default - Products, 176MB)", "isnet-general")
+        self.model_combo.addItem("u2net (General purpose, 176MB)", "u2net")
+        self.model_combo.addItem("u2netp (Lightweight/fast, 4.7MB)", "u2netp")
+        self.model_combo.addItem("u2net-human (People/portraits, 176MB)", "u2net-human")
+        self.model_combo.addItem("u2net-cloth (Clothing/fashion, 176MB)", "u2net-cloth")
+        self.model_combo.addItem("silueta (Silhouettes, 43MB)", "silueta")
+        self.model_combo.addItem("isnet-anime (Anime/illustrations, 176MB)", "isnet-anime")
+        self.model_combo.addItem("sam (Segment Anything, 358MB)", "sam")
 
         # Set current value
         current_model = self.config['model'].get('ai_model', 'isnet-general')
@@ -43,6 +49,64 @@ class ModelTab(QWidget):
 
         model_group.setLayout(model_layout)
         layout.addWidget(model_group)
+
+        # Alpha Matting group (rembg native feature)
+        alpha_matting_group = QGroupBox("Alpha Matting (rembg Feature)")
+        alpha_matting_layout = QVBoxLayout()
+
+        self.alpha_matting_check = QCheckBox("Enable alpha matting")
+        alpha_matting_cfg = self.config['model'].get('alpha_matting', {})
+        self.alpha_matting_check.setChecked(alpha_matting_cfg.get('enabled', False))
+        self.alpha_matting_check.setToolTip(
+            "Enable alpha matting for better edge quality on complex/hairy edges.\n"
+            "Slower but produces smoother, more accurate edges. Good for products with fur, hair, or fine details."
+        )
+        alpha_matting_layout.addWidget(self.alpha_matting_check)
+
+        # FG threshold
+        fg_thresh_row = QHBoxLayout()
+        fg_thresh_row.addWidget(QLabel("    Foreground threshold:"))
+        self.alpha_fg_spin = QSpinBox()
+        self.alpha_fg_spin.setRange(0, 255)
+        self.alpha_fg_spin.setValue(alpha_matting_cfg.get('foreground_threshold', 240))
+        self.alpha_fg_spin.setToolTip("Higher = stricter foreground detection (default: 240)")
+        fg_thresh_row.addWidget(self.alpha_fg_spin)
+        fg_thresh_row.addStretch()
+        alpha_matting_layout.addLayout(fg_thresh_row)
+
+        # BG threshold
+        bg_thresh_row = QHBoxLayout()
+        bg_thresh_row.addWidget(QLabel("    Background threshold:"))
+        self.alpha_bg_spin = QSpinBox()
+        self.alpha_bg_spin.setRange(0, 255)
+        self.alpha_bg_spin.setValue(alpha_matting_cfg.get('background_threshold', 10))
+        self.alpha_bg_spin.setToolTip("Lower = stricter background detection (default: 10)")
+        bg_thresh_row.addWidget(self.alpha_bg_spin)
+        bg_thresh_row.addStretch()
+        alpha_matting_layout.addLayout(bg_thresh_row)
+
+        # Erode size
+        erode_row = QHBoxLayout()
+        erode_row.addWidget(QLabel("    Erode size:"))
+        self.alpha_erode_spin = QSpinBox()
+        self.alpha_erode_spin.setRange(1, 30)
+        self.alpha_erode_spin.setValue(alpha_matting_cfg.get('erode_size', 10))
+        self.alpha_erode_spin.setToolTip("Erosion kernel size for matting (default: 10)")
+        erode_row.addWidget(self.alpha_erode_spin)
+        erode_row.addStretch()
+        alpha_matting_layout.addLayout(erode_row)
+
+        # Post-process mask
+        self.post_process_check = QCheckBox("Apply rembg post-processing")
+        self.post_process_check.setChecked(self.config['model'].get('post_process_mask', False))
+        self.post_process_check.setToolTip(
+            "Apply rembg's built-in morphological post-processing to the mask.\n"
+            "Helps clean up noise and smooth edges."
+        )
+        alpha_matting_layout.addWidget(self.post_process_check)
+
+        alpha_matting_group.setLayout(alpha_matting_layout)
+        layout.addWidget(alpha_matting_group)
 
         # Refinement settings group
         refine_group = QGroupBox("Refinement Settings")
@@ -160,7 +224,14 @@ class ModelTab(QWidget):
         """Get configuration updates from this tab."""
         return {
             'model': {
-                'ai_model': self.model_combo.currentData()
+                'ai_model': self.model_combo.currentData(),
+                'alpha_matting': {
+                    'enabled': self.alpha_matting_check.isChecked(),
+                    'foreground_threshold': self.alpha_fg_spin.value(),
+                    'background_threshold': self.alpha_bg_spin.value(),
+                    'erode_size': self.alpha_erode_spin.value()
+                },
+                'post_process_mask': self.post_process_check.isChecked()
             },
             'refinement': {
                 'edge_feather_px': self.feather_spin.value(),

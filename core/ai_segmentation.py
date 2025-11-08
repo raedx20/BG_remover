@@ -1,10 +1,11 @@
 """
-AI-based segmentation using rembg (isnet-general, u2net, u2netp).
+AI-based segmentation using rembg with enhanced features.
+Enhanced version with full rembg model support and alpha matting.
 """
 import cv2
 import numpy as np
 from PIL import Image
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict, Any
 import io
 
 
@@ -12,12 +13,65 @@ import io
 _rembg_session = {}
 
 
+# All available rembg models
+AVAILABLE_MODELS = {
+    'u2net': {
+        'name': 'u2net',
+        'description': 'General purpose, good accuracy',
+        'size': '~176 MB',
+        'best_for': 'General images'
+    },
+    'u2netp': {
+        'name': 'u2netp',
+        'description': 'Lightweight, faster',
+        'size': '~4.7 MB',
+        'best_for': 'Speed-critical applications'
+    },
+    'u2net_human_seg': {
+        'name': 'u2net_human_seg',
+        'description': 'Optimized for human segmentation',
+        'size': '~176 MB',
+        'best_for': 'People/portraits'
+    },
+    'u2net_cloth_seg': {
+        'name': 'u2net_cloth_seg',
+        'description': 'Clothing/fashion segmentation',
+        'size': '~176 MB',
+        'best_for': 'Clothing products'
+    },
+    'silueta': {
+        'name': 'silueta',
+        'description': 'High-quality silhouettes',
+        'size': '~43 MB',
+        'best_for': 'Clean silhouettes'
+    },
+    'isnet-general-use': {
+        'name': 'isnet-general-use',
+        'description': 'Best for products (Default)',
+        'size': '~176 MB',
+        'best_for': 'Product images'
+    },
+    'isnet-anime': {
+        'name': 'isnet-anime',
+        'description': 'Optimized for anime/illustrations',
+        'size': '~176 MB',
+        'best_for': 'Anime/cartoon images'
+    },
+    'sam': {
+        'name': 'sam',
+        'description': 'Segment Anything Model',
+        'size': '~358 MB',
+        'best_for': 'Complex scenes'
+    }
+}
+
+
 def get_rembg_session(model_name: str):
     """
     Get or create rembg session for specified model.
 
     Args:
-        model_name: 'isnet-general', 'u2net', or 'u2netp'
+        model_name: Model identifier (see AVAILABLE_MODELS)
 
     Returns:
         Rembg session
@@ -28,14 +82,25 @@ def get_rembg_session(model_name: str):
         try:
             from rembg import new_session
 
-            # Map model names
+            # Map friendly names to rembg model names
             model_map = {
                 'isnet-general': 'isnet-general-use',
                 'u2net': 'u2net',
-                'u2netp': 'u2netp'
+                'u2netp': 'u2netp',
+                'u2net-human': 'u2net_human_seg',
+                'u2net-cloth': 'u2net_cloth_seg',
+                'silueta': 'silueta',
+                'isnet-anime': 'isnet-anime',
+                'sam': 'sam'
             }
 
-            rembg_model = model_map.get(model_name, 'isnet-general-use')
+            rembg_model = model_map.get(model_name, model_name)
+
+            # Validate model exists
+            if rembg_model not in AVAILABLE_MODELS:
+                print(f"Warning: Unknown model '{model_name}', using 'isnet-general-use'")
+                rembg_model = 'isnet-general-use'
+
             _rembg_session[model_name] = new_session(rembg_model)
 
         except Exception as e:
@@ -45,14 +110,24 @@ def get_rembg_session(model_name: str):
 
 
 def segment_with_ai(image: np.ndarray, model_name: str = 'isnet-general',
-                    timeout_ms: int = 12000) -> Optional[np.ndarray]:
+                    timeout_ms: int = 12000,
+                    alpha_matting: bool = False,
+                    alpha_matting_foreground_threshold: int = 240,
+                    alpha_matting_background_threshold: int = 10,
+                    alpha_matting_erode_size: int = 10,
+                    post_process_mask: bool = False) -> Optional[np.ndarray]:
     """
-    Perform AI-based segmentation using rembg.
+    Perform AI-based segmentation using rembg with enhanced options.
 
     Args:
         image: RGB or BGR image
-        model_name: 'isnet-general', 'u2net', or 'u2netp'
+        model_name: Model to use (see AVAILABLE_MODELS)
         timeout_ms: Timeout in milliseconds (currently not enforced)
+        alpha_matting: Enable alpha matting for better edges
+        alpha_matting_foreground_threshold: Foreground threshold (0-255)
+        alpha_matting_background_threshold: Background threshold (0-255)
+        alpha_matting_erode_size: Erosion size for matting
+        post_process_mask: Apply morphological post-processing
 
     Returns:
         Alpha mask (0-255) or None if failed
@@ -72,8 +147,17 @@ def segment_with_ai(image: np.ndarray, model_name: str = 'isnet-general',
         # Get session
         session = get_rembg_session(model_name)
 
-        # Remove background
-        output = remove(pil_image, session=session)
+        # Remove background with enhanced options
+        output = remove(
+            pil_image,
+            session=session,
+            alpha_matting=alpha_matting,
+            alpha_matting_foreground_threshold=alpha_matting_foreground_threshold,
+            alpha_matting_background_threshold=alpha_matting_background_threshold,
+            alpha_matting_erode_size=alpha_matting_erode_size,
+            post_process_mask=post_process_mask,
+            only_mask=False  # Return RGBA
+        )
 
         # Extract alpha channel
         output_np = np.array(output)
@@ -90,6 +174,29 @@ def segment_with_ai(image: np.ndarray, model_name: str = 'isnet-general',
     except Exception as e:
         print(f"AI segmentation failed: {e}")
         return None
+
+
+def get_model_info(model_name: str = None) -> Dict[str, Any]:
+    """
+    Get information about available models.
+
+    Args:
+        model_name: Specific model name, or None for all models
+
+    Returns:
+        Dictionary with model information
+    """
+    if model_name:
+        # Map friendly names
+        model_map = {
+            'isnet-general': 'isnet-general-use',
+            'u2net-human': 'u2net_human_seg',
+            'u2net-cloth': 'u2net_cloth_seg'
+        }
+        actual_name = model_map.get(model_name, model_name)
+        return AVAILABLE_MODELS.get(actual_name, {})
+    else:
+        return AVAILABLE_MODELS
 
 
 def refine_ai_mask_with_grabcut(image: np.ndarray, ai_mask: np.ndarray,

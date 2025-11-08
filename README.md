@@ -1,21 +1,34 @@
 # Background Remover - White Product Edition
 
-A comprehensive background removal tool specifically optimized for white and near-white product images. Features AI-based segmentation, classical image processing, white preservation algorithms, and batch processing with detailed quality control.
+A comprehensive background removal tool specifically optimized for white and near-white product images. Built on **[rembg](https://github.com/danielgatis/rembg)** with enhanced features including white preservation, classical segmentation, alpha matting, and intelligent quality control.
 
 ## Features
 
 ### Core Capabilities
-- **AI Segmentation**: Three models available (isnet-general, u2net, u2netp)
-- **Classical Segmentation**: Lab color distance + GrabCut refinement
-- **White Preservation**: Critical algorithm that prevents white product details from being removed
-- **Three Processing Modes**:
-  - **Mode A** (Default): AI-first + Classical refinement with auto-fallback
-  - **Mode B**: Classical-first + AI fallback for challenging images
-  - **Mode C**: Hybrid merge combining both approaches
-- **Batch Processing**: Multi-threaded processing with progress tracking
-- **Quality Control**: Automated QC metrics with intelligent fallback
-- **CSV Reporting**: Detailed per-image metrics and processing results
-- **Smart Naming**: Automatic orientation detection (_PRT, _LSC, _SQR_LSC)
+- **Enhanced rembg Integration**: Direct integration with all 8 rembg models
+  - `isnet-general` - Best for products (Default, 176MB)
+  - `u2net` - General purpose (176MB)
+  - `u2netp` - Lightweight/faster (4.7MB)
+  - `u2net-human` - People/portraits (176MB)
+  - `u2net-cloth` - Clothing/fashion (176MB)
+  - `silueta` - High-quality silhouettes (43MB)
+  - `isnet-anime` - Anime/illustrations (176MB)
+  - `sam` - Segment Anything Model (358MB)
+
+- **Advanced rembg Features**:
+  - **Alpha Matting**: Better edge quality for complex/hairy edges
+  - **Post-processing**: Built-in morphological mask operations
+  - Optimized session management with model caching
+
+- **Our Enhancements**:
+  - **White Preservation Algorithm**: Prevents white product details from being removed
+  - **Classical Segmentation**: Lab color distance + GrabCut refinement
+  - **Three Processing Modes**: AI-first, Classical-first, or Hybrid merge
+  - **Batch Processing**: Multi-threaded with progress tracking
+  - **Quality Control**: Automated QC metrics with intelligent fallback
+  - **CSV Reporting**: Detailed per-image metrics
+  - **Smart Naming**: Automatic orientation detection (_PRT, _LSC, _SQR_LSC)
+  - **Full GUI**: PyQt5 interface with all settings configurable
 
 ### White Preservation Algorithm
 
@@ -98,17 +111,32 @@ python app.py
 - **Force AI** checkbox: Override mode for troubleshooting
 
 **4. Model & Refinement Tab**
-- **AI Model**:
-  - `isnet-general` (Default): Best for product images
-  - `u2net`: General purpose
-  - `u2netp`: Lightweight, faster
-- **Refinement**:
+- **AI Model** (Choose from 8 rembg models):
+  - `isnet-general` - Best for products (Default, 176MB)
+  - `u2net` - General purpose (176MB)
+  - `u2netp` - Lightweight/faster (4.7MB)
+  - `u2net-human` - People/portraits (176MB)
+  - `u2net-cloth` - Clothing/fashion (176MB)
+  - `silueta` - High-quality silhouettes (43MB)
+  - `isnet-anime` - Anime/illustrations (176MB)
+  - `sam` - Segment Anything Model (358MB)
+
+- **Alpha Matting** (rembg native feature):
+  - Enable for complex/hairy edges (slower but better quality)
+  - Foreground threshold: 0-255 (default: 240)
+  - Background threshold: 0-255 (default: 10)
+  - Erode size: 1-30 (default: 10)
+  - Post-processing: Apply rembg's morphological operations
+
+- **Refinement** (Our enhancements):
   - Edge feather: 0-10 pixels (default: 3)
   - GrabCut refinement: ON by default, 3-5 iterations
-- **White Preservation** (Always enabled):
+
+- **White Preservation** (Our key feature - Always enabled):
   - Configure HSV and Lab thresholds
   - Lower S threshold = more aggressive preservation
   - Higher V/L threshold = only brightest whites
+
 - **Trimming**: Remove transparent borders with safe margin
 
 **5. QC & Logging Tab**

@@ -1,0 +1,19 @@
+# Background Remover CLI - Enhanced rembg
+# Core dependencies
+opencv-python>=4.8.0
+opencv-contrib-python>=4.8.0
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# AI Models - using rembg directly
+rembg[cli]>=2.0.50
+
+# CLI & Progress
+click>=8.1.0
+tqdm>=4.65.0
+
+# Configuration
+PyYAML>=6.0
+
+# Optional: GPU acceleration
+# onnxruntime-gpu>=1.15.0  # Uncomment for CUDA support
