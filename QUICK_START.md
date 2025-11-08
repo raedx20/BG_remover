@@ -182,6 +182,30 @@ cd BG_remover
 
 ## Troubleshooting for Beginners
 
+### ⚠️ "DLL load failed" or "AI segmentation failed" (MOST COMMON!)
+
+**Full error:** `DLL load failed while importing onnxruntime_pybind11_state`
+
+**This is the #1 most common error!** It means Windows is missing required system files.
+
+**FIX:**
+
+1. **Double-click**: `fix_onnxruntime.bat` (automated fix script)
+   - This will guide you through the entire fix process
+
+2. **OR do it manually:**
+   - Download: https://aka.ms/vs/17/release/vc_redist.x64.exe
+   - Run the installer (Visual C++ Redistributable)
+   - Click "Install"
+   - **Restart your computer**
+   - Run the app again
+
+**Why this happens:** The onnxruntime library (AI engine) needs Microsoft Visual C++ runtime files that aren't included with Windows by default.
+
+**After fix:** Run `test.bat` to verify everything works!
+
+---
+
 ### "Application won't start"
 
 **Check 1:** Is Python installed?
