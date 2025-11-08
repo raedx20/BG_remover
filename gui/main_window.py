@@ -13,6 +13,7 @@ from gui.tabs.input_tab import InputTab
 from gui.tabs.output_tab import OutputTab
 from gui.tabs.mode_tab import ModeTab
 from gui.tabs.model_tab import ModelTab
+from gui.tabs.cpg_tab import CPGTab
 from gui.tabs.qc_tab import QCTab
 from gui.tabs.performance_tab import PerformanceTab
 from gui.tabs.run_tab import RunTab
@@ -46,18 +47,20 @@ class MainWindow(QMainWindow):
         self.input_tab = InputTab(self.config)
         self.output_tab = OutputTab(self.config)
         self.mode_tab = ModeTab(self.config)
+        self.cpg_tab = CPGTab(self.config)
         self.model_tab = ModelTab(self.config)
         self.qc_tab = QCTab(self.config)
         self.performance_tab = PerformanceTab(self.config)
         self.run_tab = RunTab(self.config)
 
         self.tabs.addTab(self.input_tab, "1. Input")
-        self.tabs.addTab(self.output_tab, "2. Output && Naming")
+        self.tabs.addTab(self.output_tab, "2. Output & Naming")
         self.tabs.addTab(self.mode_tab, "3. Processing Mode")
-        self.tabs.addTab(self.model_tab, "4. Model && Refinement")
-        self.tabs.addTab(self.qc_tab, "5. QC && Logging")
-        self.tabs.addTab(self.performance_tab, "6. Performance")
-        self.tabs.addTab(self.run_tab, "7. Run")
+        self.tabs.addTab(self.cpg_tab, "4. CPG Presets")
+        self.tabs.addTab(self.model_tab, "5. Model & Refinement")
+        self.tabs.addTab(self.qc_tab, "6. QC & Logging")
+        self.tabs.addTab(self.performance_tab, "7. Performance")
+        self.tabs.addTab(self.run_tab, "8. Run")
 
         layout.addWidget(self.tabs)
         central_widget.setLayout(layout)
@@ -131,6 +134,10 @@ class MainWindow(QMainWindow):
                 'mode': 'A',
                 'force_ai_all': False
             },
+            'cpg': {
+                'preset_enabled': False,
+                'preset_name': 'none'
+            },
             'model': {
                 'ai_model': 'isnet-general'
             },
@@ -177,6 +184,7 @@ class MainWindow(QMainWindow):
             self.input_tab,
             self.output_tab,
             self.mode_tab,
+            self.cpg_tab,
             self.model_tab,
             self.qc_tab,
             self.performance_tab

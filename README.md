@@ -110,7 +110,24 @@ python app.py
   - Intelligently merges results
 - **Force AI** checkbox: Override mode for troubleshooting
 
-**4. Model & Refinement Tab**
+**4. CPG Presets Tab** ⭐ NEW!
+- **Optimized for Consumer Packaged Goods**:
+  - 🍾 **Transparent/Glass**: Bottles, jars, clear containers with transparency
+  - ✨ **Glossy/Reflective**: Cosmetics, shampoo, lotions, glossy packaging
+  - 📦 **Food Packaging**: Cereal boxes, snack bags, frozen food
+  - 🥤 **Beverage**: Soda cans, bottles (opaque and transparent)
+  - 🥛 **White Products**: Milk, bleach, white detergent, dairy
+  - 💄 **Beauty/Cosmetics**: Makeup, skincare, beauty products
+  - 🧹 **Household**: Cleaning supplies, detergents
+  - 🥫 **Metallic/Cans**: Aluminum cans, aerosol, foil
+
+- **How CPG Presets Work**:
+  - One-click optimization for your product type
+  - Automatically configures AI model, alpha matting, processing mode
+  - Overrides manual settings when enabled
+  - Fine-tuned for CPG product characteristics (reflections, transparency, text preservation)
+
+**5. Model & Refinement Tab**
 - **AI Model** (Choose from 8 rembg models):
   - `isnet-general` - Best for products (Default, 176MB)
   - `u2net` - General purpose (176MB)
@@ -139,7 +156,7 @@ python app.py
 
 - **Trimming**: Remove transparent borders with safe margin
 
-**5. QC & Logging Tab**
+**6. QC & Logging Tab**
 - **QC Metrics** (for warnings):
   - Expected foreground ratio: 10-90%
   - Edge confidence minimum: 14
@@ -149,13 +166,13 @@ python app.py
   - Edge confidence: 12
 - **Debug Masks**: Enable to save diagnostic previews (OFF by default)
 
-**6. Performance Tab**
+**7. Performance Tab**
 - **Concurrency**: Auto (CPU-based) or Fixed thread count
 - **Max Side**: Downscale limit for processing (1600-2000px recommended)
 - **Timeouts**: AI (12s) and Classical (4s) per image
 - **Queue Order**: Natural (alphabetical) or Smallest-first
 
-**7. Run Tab**
+**8. Run Tab**
 - Click "Start Processing" to begin
 - Monitor progress bar and live log
 - Log format: `# | filename | Mode | Model | FG% | Edge | time ms | ✓/✖`
@@ -273,6 +290,123 @@ Generated CSV includes:
 | elapsed_ms | Processing time in milliseconds |
 | status | success / failed |
 | notes | Warnings, fallbacks, errors |
+
+## CPG Product Optimization ⭐ NEW!
+
+### What are CPG Presets?
+
+CPG (Consumer Packaged Goods) presets are one-click optimized settings for different types of packaged products. Each preset automatically configures:
+- Best AI model for the product type
+- Optimal alpha matting settings
+- Processing mode (A/B/C)
+- White preservation thresholds
+- Refinement parameters
+
+### When to Use CPG Presets
+
+**Use CPG Presets when:**
+- Processing e-commerce product photography
+- Working with specific product categories (cosmetics, beverages, food packaging)
+- You want optimal settings without manual tuning
+- Processing batches of similar products
+
+**Use Manual Settings when:**
+- You need fine-grained control
+- Working with unique/non-standard products
+- Experimenting with different approaches
+
+### CPG Preset Guide
+
+#### 🍾 Transparent/Glass Products
+**Best for:** Water bottles, perfume bottles, skincare jars, glass containers
+**Key Features:**
+- Alpha matting enabled for transparent edges
+- Mode C (Hybrid) for best transparency handling
+- Higher background threshold to preserve transparency
+- Optimized for see-through materials
+
+#### ✨ Glossy/Reflective Products
+**Best for:** Cosmetics, shampoo bottles, conditioner, lotions
+**Key Features:**
+- Preserves highlights and reflections
+- Lower saturation threshold for glossy highlights
+- Mode A (AI-first) handles reflections well
+- No post-processing to keep metallic finishes
+
+#### 📦 Food Packaging
+**Best for:** Cereal boxes, snack bags, frozen food boxes, candy packages
+**Key Features:**
+- Standard settings optimized for printed text
+- Post-processing for clean edges
+- Good text preservation
+- Mode A for reliable results
+
+#### 🥤 Beverage Containers
+**Best for:** Soda cans, beer bottles, juice bottles, energy drinks
+**Key Features:**
+- Handles both opaque cans and transparent bottles
+- Alpha matting for bottle transparency
+- Mode C (Hybrid) for mixed materials
+- Sharp edges for metallic cans
+
+#### 🥛 White Products
+**Best for:** Milk cartons, bleach bottles, white detergent, dairy products
+**Key Features:**
+- **Most aggressive white preservation**
+- Very high Lab L threshold (90)
+- Extra edge feathering for white blending
+- Prevents white-on-white detail loss
+
+#### 💄 Beauty & Cosmetics
+**Best for:** Lipstick, foundation, eyeshadow, skincare, compacts
+**Key Features:**
+- Premium quality settings
+- Sharp edges for clean product shots
+- Preserves metallic and glossy finishes
+- Mode A for best quality
+
+#### 🧹 Household Products
+**Best for:** Cleaning supplies, detergents, dish soap, paper products
+**Key Features:**
+- Standard CPG settings
+- Reliable for most household items
+- Good text preservation
+- Mode A (AI-first)
+
+#### 🥫 Metallic/Cans
+**Best for:** Aluminum cans, aerosol cans, metal containers, foil packaging
+**Key Features:**
+- Optimized for metallic reflections
+- Alpha matting for reflective edges
+- Mode C (Hybrid) for complex reflections
+- Preserves bright metallic highlights
+
+### How to Use CPG Presets
+
+1. **Open Tab 4: CPG Presets**
+2. **Check "Enable CPG Preset"**
+3. **Select your product type** from the dropdown
+4. **Read the description** to confirm it matches your products
+5. **Process your images** - preset automatically applies
+
+**Note:** When CPG preset is enabled, it overrides manual settings from the Model & Refinement tab.
+
+### CPG Preset Examples
+
+**Scenario 1: E-commerce cosmetics shoot**
+- Product: Luxury skincare bottles (glossy)
+- Preset: ✨ Glossy/Reflective
+- Result: Perfect preservation of glossy highlights and reflections
+
+**Scenario 2: Beverage product catalog**
+- Product: Mixed soda cans and bottles
+- Preset: 🥤 Beverage
+- Result: Clean metallic cans, transparent bottles with content visible
+
+**Scenario 3: White dairy products**
+- Product: Milk cartons, yogurt containers
+- Preset: 🥛 White Products
+- Result: Zero white detail loss, perfect text preservation
 
 ## Tuning Guide
 

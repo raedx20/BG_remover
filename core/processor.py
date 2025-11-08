@@ -39,6 +39,9 @@ class ImageProcessor:
         """
         self.config = config
 
+        # Apply CPG preset if enabled
+        self._apply_cpg_preset()
+
     def process_image(self, input_path: str, output_folder: str) -> Dict[str, Any]:
         """
         Process single image according to configured mode.
@@ -367,3 +370,19 @@ class ImageProcessor:
         # This will be implemented if debug_masks_enabled is True
         # For now, placeholder
         pass
+
+    def _apply_cpg_preset(self):
+        """Apply CPG preset if enabled."""
+        cpg_cfg = self.config.get('cpg', {})
+
+        if not cpg_cfg.get('preset_enabled', False):
+            return  # CPG presets not enabled
+
+        preset_name = cpg_cfg.get('preset_name', 'none')
+
+        if preset_name == 'none':
+            return  # No preset selected
+
+        # Apply preset
+        from core.cpg_presets import apply_cpg_preset
+        self.config = apply_cpg_preset(self.config, preset_name)

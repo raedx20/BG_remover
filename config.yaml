@@ -21,6 +21,20 @@ processing:
              # C: Hybrid-merge
   force_ai_all: false  # Override mode, use AI for all (troubleshooting)
 
+# CPG (Consumer Packaged Goods) Presets
+cpg:
+  preset_enabled: false  # Enable to use CPG preset (overrides manual settings)
+  preset_name: "none"    # CPG preset to use when enabled
+  # Available presets:
+  # - cpg-transparent: Bottles, jars, clear containers
+  # - cpg-glossy: Cosmetics, shampoo, glossy packaging
+  # - cpg-food-packaging: Cereal, snacks, frozen food
+  # - cpg-beverage: Soda cans, bottles, drinks
+  # - cpg-white-products: Milk, bleach, white detergent
+  # - cpg-beauty-cosmetics: Makeup, skincare, beauty
+  # - cpg-household: Cleaning supplies, detergents
+  # - cpg-metallic: Aluminum cans, aerosol, foil
+
 model:
   ai_model: "isnet-general"  # See all available models below
   # Available models from rembg:
