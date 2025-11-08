@@ -44,22 +44,62 @@ The white preservation algorithm is the key differentiator for white-on-white pr
 - HSV: S ≤ 25, V ≥ 220
 - Lab: L ≥ 85
 
+## Quick Start for Beginners 🚀
+
+**New to this? Want simple instructions?**
+
+👉 **Read [QUICK_START.md](QUICK_START.md)** for a beginner-friendly guide!
+
+**For Windows users with Intel Iris Xe or any CPU:**
+1. Install Python 3.8+ (one time)
+2. Double-click `install.bat` (one time)
+3. Double-click `run.bat` (every time)
+4. Use the GUI - no coding required!
+
+**That's it!** See QUICK_START.md for detailed step-by-step instructions.
+
+---
+
 ## Installation
 
 ### Requirements
+
+**System:**
+- **CPU**: Any modern CPU (Intel Iris Xe, AMD, Intel Core, etc.)
+- **GPU**: NOT required! Works perfectly on CPU only
+- **RAM**: 4GB minimum, 8GB recommended
+- **OS**: Windows 10/11, macOS, Linux
+- **Disk Space**: 2GB (for libraries + AI models)
+
+**Software:**
 - Python 3.8 or higher
+- Internet connection (for downloading models on first run)
+
+**Libraries:**
 - PyQt5 for GUI
 - OpenCV for image processing
-- rembg for AI segmentation
+- rembg for AI segmentation (CPU-based)
+- All dependencies are CPU-only by default!
 
-### Setup
+### Quick Setup (Windows)
+
+**Easiest method:**
+```bash
+# 1. Double-click install.bat
+# 2. Double-click run.bat
+# Done!
+```
+
+See [QUICK_START.md](QUICK_START.md) for detailed beginner instructions.
+
+### Manual Setup (All Platforms)
 
 ```bash
 # Clone the repository
 git clone <repository-url>
 cd BG_remover
 
-# Install dependencies
+# Install dependencies (CPU-only)
 pip install -r requirements.txt
 
 # Run the application

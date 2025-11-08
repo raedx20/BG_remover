@@ -1,12 +1,16 @@
 # Background Remover Requirements
+# CPU-ONLY VERSION - Works on Intel Iris Xe and all CPUs
+# No dedicated GPU required!
+
 # Core image processing
 opencv-python>=4.8.0
 opencv-contrib-python>=4.8.0
 numpy>=1.24.0
 Pillow>=10.0.0
 
-# AI Models for segmentation
-# rembg provides isnet-general, u2net, u2netp models
+# AI Models for segmentation (CPU-based)
+# rembg uses onnxruntime (CPU) by default
+# Supports: isnet-general, u2net, u2netp, and 5 more models
 rembg>=2.0.50
 
 # GUI
@@ -17,3 +21,7 @@ PyYAML>=6.0
 
 # Utilities
 tqdm>=4.65.0
+
+# NOTE: For GPU acceleration (OPTIONAL, NOT REQUIRED):
+# Uncomment the line below if you have NVIDIA GPU with CUDA
+# onnxruntime-gpu>=1.15.0
